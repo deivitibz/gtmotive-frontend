@@ -1,0 +1,51 @@
+<div class="brands-list-container">
+  <header class="brands-header">
+    <h1>Marcas de vehículos</h1>
+    <p class="subtitle">Selecciona una marca para ver tipos y modelos disponibles</p>
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar marca</mat-label>
+      <input
+        matInput
+        [formControl]="searchControl"
+        placeholder="Ej: Honda, Toyota..."
+      />
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+  </header>
+
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Cargando marcas...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
+  } @else {
+    <div class="virtual-scroll-wrapper">
+      <cdk-virtual-scroll-viewport
+        [itemSize]="itemSize"
+        class="virtual-viewport"
+        minBufferPx="400"
+        maxBufferPx="800"
+      >
+        <mat-card
+          *cdkVirtualFor="let brand of filteredBrands(); trackBy: trackByBrandId"
+          class="brand-card"
+          (click)="onBrandSelect(brand)"
+        >
+          <mat-card-content>
+            <span class="brand-name">{{ brand.name }}</span>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+          </mat-card-content>
+        </mat-card>
+      </cdk-virtual-scroll-viewport>
+    </div>
+
+    @if (filteredBrands().length === 0 && !loading()) {
+      <p class="no-results">No se encontraron marcas que coincidan con la búsqueda.</p>
+    }
+  }
+</div>

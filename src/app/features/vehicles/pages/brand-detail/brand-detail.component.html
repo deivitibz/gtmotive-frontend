@@ -1,0 +1,58 @@
+<div class="brand-detail-container">
+  <a mat-button routerLink="/" class="back-link">
+    <mat-icon>arrow_back</mat-icon>
+    Volver a marcas
+  </a>
+
+  @if (brandId() === null) {
+    <div class="error">
+      <mat-icon>error_outline</mat-icon>
+      <p>ID de marca no válido.</p>
+    </div>
+  } @else if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Cargando información de {{ brandName() || 'la marca' }}...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (brandDetail()) {
+    @let detailRef = brandDetail()!;
+    <header class="brand-header">
+      <h1>{{ detailRef.brandName }}</h1>
+    </header>
+
+    <section class="section">
+      <h2>Tipos de vehículo</h2>
+      @if (detailRef.vehicleTypes.length > 0) {
+        <div class="chips-wrapper">
+          @for (type of detailRef.vehicleTypes; track trackByVehicleTypeId($index, type)) {
+            <mat-chip>{{ type.name }}</mat-chip>
+          }
+        </div>
+      } @else {
+        <p class="empty">No hay tipos de vehículo registrados para esta marca.</p>
+      }
+    </section>
+
+    <section class="section">
+      <h2>Modelos disponibles ({{ detailRef.models.length }})</h2>
+      @if (detailRef.models.length > 0) {
+        <div class="models-grid">
+          @for (model of detailRef.models; track trackByModelId($index, model)) {
+            <mat-card class="model-card">
+              <mat-card-content>
+                {{ model.name }}
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      } @else {
+        <p class="empty">No hay modelos registrados para esta marca.</p>
+      }
+    </section>
+  }
+</div>
